@@ -1,0 +1,13 @@
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.pem
+node_modules
+*.un~
+Session.vim
+.netrwhist
+*~
+.DS_Store
+node_modules
+*.sublime-project
+*.sublime-workspace
+genome_Allan_Enemark_v3_Full_20170424144043.txt

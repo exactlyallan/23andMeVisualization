@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="author" content="exactly.allan@gmail.com">
+  <meta name="description" content="Genetic Visualization">
+  <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+<link href="/./styles/app.css" rel="stylesheet"></head>
+<body>
+    <!-- load button -->
+    <div class="nav" title="click to upload 23andMe raw dna data">
+      <label for="upload-dna-data"><img class="upload-img" src="/images/upload-dna.png" /></label>
+      <input type="file" id="upload-dna-data" accept=".tsv, .txt">
+    </div>
+
+    <!-- A-frame -->
+    <a-scene>
+      <a-entity camera position="0 0 15" look-controls wasd-controls></a-entity>
+      <a-sky color="#3c3b3b"></a-sky>
+
+      <!-- Loading Section -->
+      <a-torus-knot id="loading-3d" scale="0.5 0.5 0.5" position="0 0 0" color="#ffffff" arc="180" p="2" q="7" radius="5" radius-tubular="0.1">
+        <a-animation attribute="rotation"
+               dur="8000"
+               fill="forwards"
+               to="0 180 180"
+               repeat="indefinite"></a-animation>
+      </a-torus-knot>
+
+      <!-- DNA Section -->
+
+    </a-scene>
+<script type="text/javascript" src="/bundle.js"></script></body>
+</html>

@@ -1,0 +1,29 @@
+
+.nav {
+	background-color: rgba(0,0,0,0.35);
+    min-width: 50px;
+    min-height: 50px;
+    padding: 1vw;
+    width: 2.5vw;
+    height: 2.5vw;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+}
+
+.nav input {
+	width: 0;
+	height: 0;
+	opacity: 0;
+}
+
+.nav label {
+	cursor: pointer;
+	color: white;
+}
+
+.nav label .upload-img {
+	width: 100%;
+	height: auto;
+}
