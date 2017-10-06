@@ -82,11 +82,62 @@ __webpack_require__(4)
 
 
 // A-Frame Requried in Head, import components here
-console.log("Starting Custom Aframe Code...")
-
-__webpack_require__(5)
+var DNAParse = __webpack_require__(5)
 
 __webpack_require__(7)
+
+
+// A-Frame requires head script injection, wait until DOM is loaded to do vanilla JS
+// https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded
+document.addEventListener('DOMContentLoaded', readyToGo)
+
+
+// Loaded Wrapper
+function readyToGo() {
+
+	// Event listener on file load
+	var input = document.querySelector('#upload-dna-data');
+ 	input.addEventListener('change', (event)=>{
+
+ 		// Load DNA input file 
+ 		DNAParse.papaFile(input, (dataFile)=>{
+ 			// async once loaded parse
+ 			var dnaData = DNAParse.parseDNAfile(dataFile)
+
+ 			buildChroms(dnaData, 1)
+
+ 		})
+ 		
+ 	});
+
+
+
+}
+
+
+// add genetic-viz-component entities to scene once data is loaded
+function buildChroms(dnaData, chromNum) {
+
+    var sceneEl = document.querySelector('a-scene');
+
+    // remove loading animation
+    var loadingEl = sceneEl.querySelector('#loading3D')
+    if (loadingEl) {
+        sceneEl.removeChild(loadingEl)
+    }
+
+    // NOTE: only load 1 chromosome at a time, too large for browser to handle! 
+	var entityEl = document.createElement('a-entity');
+	entityEl.setAttribute('genetic-viz-component', {chromData: dnaData[chromNum]});
+	entityEl.setAttribute('position', {x:0, y:0, z:0})
+	//entityEl.setAttribute('animation', {property: 'rotation', dur:'2000', to:'0 360 0', repeat:'indefinite', fill:'forwards'})
+
+	sceneEl.appendChild(entityEl);
+
+
+}
+
+
 
 
 
@@ -94,7 +145,7 @@ __webpack_require__(7)
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"author\" content=\"exactly.allan@gmail.com\">\n  <meta name=\"description\" content=\"Genetic Visualization\">\n  <script src=\"https://aframe.io/releases/0.6.1/aframe.min.js\"></script>\n</head>\n<body>\n    <!-- load button -->\n    <div class=\"nav\" title=\"click to upload 23andMe raw dna data\">\n      <label for=\"upload-dna-data\"><img class=\"upload-img\" src=\"" + __webpack_require__(3) + "\" /></label>\n      <input type=\"file\" id=\"upload-dna-data\" accept=\".tsv, .txt\">\n    </div>\n\n    <!-- A-frame -->\n    <a-scene>\n      <a-entity camera position=\"0 0 15\" look-controls wasd-controls></a-entity>\n      <a-sky color=\"#3c3b3b\"></a-sky>\n\n      <!-- Loading Section -->\n      <a-torus-knot id=\"loading-3d\" scale=\"0.5 0.5 0.5\" position=\"0 0 0\" color=\"#ffffff\" arc=\"180\" p=\"2\" q=\"7\" radius=\"5\" radius-tubular=\"0.1\">\n        <a-animation attribute=\"rotation\"\n               dur=\"8000\"\n               fill=\"forwards\"\n               to=\"0 180 180\"\n               repeat=\"indefinite\"></a-animation>\n      </a-torus-knot>\n\n      <!-- DNA Section -->\n\n    </a-scene>\n</body>\n</html>";
+module.exports = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"author\" content=\"exactly.allan@gmail.com\">\n  <meta name=\"description\" content=\"Genetic Visualization\">\n  <script src=\"https://aframe.io/releases/0.6.1/aframe.min.js\"></script>\n</head>\n<body>\n    <!-- load button -->\n    <div class=\"nav\" title=\"click to upload 23andMe raw dna data\">\n      <label for=\"upload-dna-data\"><img class=\"upload-img\" src=\"" + __webpack_require__(3) + "\" /></label>\n      <input type=\"file\" id=\"upload-dna-data\" accept=\".tsv, .txt\">\n    </div>\n\n    <!-- A-frame -->\n    <a-scene stats antialias=\"false\">\n      <a-entity camera position=\"0 20 40\" look-controls wasd-controls></a-entity>\n      <a-sky color=\"#3c3b3b\"></a-sky>\n\n      <!-- Loading Section -->\n      <a-torus-knot id=\"loading3D\" scale=\"1 1 1\" position=\"0 20 0\" color=\"#ffffff\" arc=\"180\" p=\"2\" q=\"7\" radius=\"5\" radius-tubular=\"0.1\">\n        <a-animation attribute=\"rotation\"\n               dur=\"8000\"\n               fill=\"forwards\"\n               to=\"0 180 180\"\n               repeat=\"indefinite\"></a-animation>\n      </a-torus-knot>\n\n    </a-scene>\n</body>\n</html>";
 
 /***/ }),
 /* 3 */
@@ -117,119 +168,131 @@ module.exports = __webpack_require__.p + "images/upload-dna.png";
 // https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data
 
 
-// https://en.wikipedia.org/wiki/Human_genome
-// 0 index spacer, 1-22,X,Y,MT
-var totalBPlist = [0, 248956422, 242193529, 198295559, 190214555, 181538259, 170805979, 159345973, 145138636, 138394717, 133797422, 135086622, 133275309, 114364328, 107043718, 101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983, 50818468, 156040895, 57227415, 16569]
-
-// Final Data set
-var visualizationDataSet = [];
-
 // Load DNA file via http://papaparse.com/
 var Papa = __webpack_require__(6)
 
-// A-Frame requires head script injection, wait until DOM is loaded to do vanilla JS
-// https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded
-document.addEventListener('DOMContentLoaded', readyToGo)
+
+// https://www.ncbi.nlm.nih.gov/grc/human/data?asm=GRCh37.p13
+// 0 index spacer, 1-22,X,Y,MT
+var totalBPlist = [0, 249250621, 243199373, 198022430, 191154276, 180915260, 171115067, 159138663, 146364022, 141213431, 135534747, 135006516, 133851895, 115169878, 107349540, 102531392, 90354753, 81195210, 78077248, 59128983, 63025520, 48129895, 51304566, 155270560, 59373566, 16569]
 
 
-// Loaded Wrapper
-function readyToGo(){
+// Papa parse file
+var papaFile = function(input, callback) {
+    // if file selected
+    if (input.files.length > 0) {
 
-	var input = document.querySelector('#upload-dna-data');
-	input.addEventListener('change', getDNAdata);
+        // Should work with default 23andme downloaded .txt file!
+        Papa.parse(input.files[0], {
+            delimiter: "	", // tab
+            newline: "", // auto-detect
+            quoteChar: '"',
+            comments: "#",
+            header: false,
+            skipEmptyLines: true,
+            error: function(err, file, inputElem, reason) {
+                console.log("File loading error:", err, reason)
+                callback( null )
+            },
+            complete: function(results) {
+                console.log("File loaded: ", results);
+               	callback( results.data )
+            }
+        })
+    }
 
-	// Papa parse file
-	function getDNAdata(){
-		// if file selected
-		if(input.files.length > 0){
 
-			// Should work with default 23andme downloaded .txt file!
-			Papa.parse(input.files[0], {
-				delimiter: "	",	// tab
-				newline: "",	// auto-detect
-				quoteChar: '"',
-				comments: "#",
-				header: false,
-				skipEmptyLines: true,
-				error: function(err, file, inputElem, reason){
-					console.log("File loading error:", err, reason)
-		
-				},
-				complete: function(results) {
-					console.log("File loaded: ", results);
-					parseDNA(results.data)
-				}
-			})
-		}
+}
 
+// Map parsed results to array useable for viz
+// ["rs529520", "1", "29174946", "AA"]
+var parseDNAfile = function(rawData) {
+
+	// if error 
+	if(rawData === null){
+		return (null)
 	}
 
-	// Map parsed results to array useable for viz
-	// ["rs529520", "1", "29174946", "AA"]
-	function parseDNA(rawData){
-		
+    var allChromData = [[]]; // need inital blank array to offset 1 chrom index
+    var prevPos = 0;
+    var prevChrom = 0;
+    var curPos = 0;
+    var curChrom = 0;
 
-		// create array of chromosome array of objects 
-		totalBPlist.forEach(function(d,i){
-			visualizationDataSet.push([])
-		})
+    for (var i = 0; i < rawData.length; i++) {
 
-		// parse to visualizationDataSet
-		var prevValue = 0;
-		var prevChrom = 0;
-		rawData.forEach(function(d,i){
+        var d = rawData[i];
 
-			var curValue = parseInt(d[2])
-			var curChrom = 0;
+        curPos = parseInt(d[2])
+        curChrom = 0;
 
-			// parse X / Y / MT as index
-			if(parseInt(d[1]) <= 22 ){
-				curChrom = parseInt(d[1])
+        // parse X / Y / MT as index
+        if (parseInt(d[1]) <= 22) {
+            curChrom = parseInt(d[1])
 
-			} else if(d[1] == 'X' || d[1] == 'x'){
-				curChrom = 23
+        } else if (d[1] == 'X' || d[1] == 'x') {
+            curChrom = 23
 
-			} else if ([d[1]] == 'Y' || d[1] == 'y'){
-				curChrom = 24
+        } else if ([d[1]] == 'Y' || d[1] == 'y') {
+            curChrom = 24
 
-			} else if(d[1] == 'MT' || d[1] == 'mt') {
-				curChrom = 25
-			} else {
-				// error dump
-				curChrom = 0;
-			}
+        } else if (d[1] == 'MT' || d[1] == 'mt') {
+            curChrom = 25
+        } else {
+            // error dump
+            curChrom = 0;
+        }
 
-			// reset gap count on new Chrom
-			if(curChrom != prevChrom){
-				prevChrom = curChrom;
-				prevValue = 0;
-			}
+        // reset gap count on new Chrom, get end gap, and add new array
+        if (curChrom != prevChrom) {
 
-			var obj = {
-						gap: curValue - prevValue,
-						id: d[0],
-						pos: d[2],
-						chrom: d[1],
-						value: d[3]
-					}
+            // calc end gap
+            var objGap = {
+                gap: (totalBPlist[prevChrom] - prevPos), // get last gap from BPtotal
+                id: null,
+                pos: null,
+                chrom: null,
+                value: null
+            }
 
-					console.log(curValue-prevValue)
+            // add end gap
+            allChromData[prevChrom].push(objGap)
 
-			visualizationDataSet[curChrom].push(obj)
+            prevChrom = curChrom;
+            prevPos = 0;
 
-			// update prev value
-			prevValue = parseInt(d[2])
+            // add new array
+            allChromData.push([])
+        }
 
-		})
+        var obj = {
+            gap: curPos - prevPos,
+            id: d[0],
+            pos: d[2],
+            chrom: d[1],
+            value: d[3]
+        }
 
-	}
-
-
-}; // end loaded wrapper
-
-
+        // add SNP to chrom
+        allChromData[curChrom].push(obj)
 
 
+        // update previous to current
+        prevChrom = curChrom;
+        prevPos = curPos;
+
+    }
+
+    return (allChromData)
+
+}
+
+
+// export
+module.exports = {
+	papaFile: papaFile,
+	parseDNAfile: parseDNAfile
+}
 
 
 
@@ -1838,33 +1901,270 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 // Genetic-Viz Component
 
-AFRAME.registerComponent('genetic-viz', {
+AFRAME.registerComponent('genetic-viz-component', {
   schema: {
-    width: {type: 'number', default: 10},
-    depth: {type: 'number', default: 10}
+    chromData: {type: 'array'}
   },
   init: function () {
-    var data = this.data
-    var el = this.el
-    
-    console.log("genetic-viz Component inited!")
+    // just update
+    console.log("genetic-viz-component init")
 
   },
   update: function (oldData) {
+    var data = this.data.chromData;
+    var el = this.el;
+    var dataLength = data.length // full chrom length
 
-  	var data = this.data
-  	var el = this.el
+    console.log("chrom data length:", data.length)
+    // {gap: 18674, id: "rs10195681", pos: "18674", chrom: "2", value: "CC"}
+    // AA GG TT CC (4)
+    // AG AT AC A (1)
+    // GA GT GC G (1)
+    // TA TG TC T (1)
+    // CA CG CT C (1)
+    // Other (1)
+    // Gap (1) TBD
+
+    var radius = 20 // ring radius
+    
+    this.geometryAA = new THREE.Geometry()
+    this.geometryGG = new THREE.Geometry()
+    this.geometryTT = new THREE.Geometry()
+    this.geometryCC = new THREE.Geometry()
+    this.geometryA = new THREE.Geometry()
+    this.geometryG = new THREE.Geometry()
+    this.geometryT = new THREE.Geometry()
+    this.geometryC = new THREE.Geometry()
+    this.geometryOther = new THREE.Geometry()
+
+    for(var j=0; j<dataLength; j++){
+
+      var value = data[j].value
+      var gap = data[j].gap
+
+      var lineLength = 3;
+
+      var theta = ((2*Math.PI)/radius) * 0.1 //  spaces increments
+      var posX1 = radius * Math.cos(theta * (j+gap))
+      var posZ1 = radius * Math.sin(theta * (j+gap))
+      var posX2 = (radius + lineLength) * Math.cos(theta * (j+gap))
+      var posZ2 = (radius + lineLength) * Math.sin(theta * (j+gap))
+      var posY = radius/(dataLength *0.1) * (j+gap) // spiral height
+      
+      var vertexAA1 = new THREE.Vector3()
+      var vertexAA2 = new THREE.Vector3()
+
+      var vertexGG1 = new THREE.Vector3()
+      var vertexGG2 = new THREE.Vector3()
+
+      var vertexTT1 = new THREE.Vector3()
+      var vertexTT2 = new THREE.Vector3()
+
+      var vertexCC1 = new THREE.Vector3()
+      var vertexCC2 = new THREE.Vector3()
+
+      var vertexA1 = new THREE.Vector3()
+      var vertexA2 = new THREE.Vector3()
+
+      var vertexG1 = new THREE.Vector3()
+      var vertexG2 = new THREE.Vector3()
+
+      var vertexT1 = new THREE.Vector3()
+      var vertexT2 = new THREE.Vector3()
+
+      var vertexC1 = new THREE.Vector3()
+      var vertexC2 = new THREE.Vector3()
+
+      var vertexOther1 = new THREE.Vector3()
+      var vertexOther2 = new THREE.Vector3()
+
+      var vertexGap = new THREE.Vector3()
+
+
+      // add value lines
+      if(value == 'AA'){
+
+        vertexAA1.x = posX1
+        vertexAA1.y = posY
+        vertexAA1.z = posZ1
+
+        vertexAA2.x = posX2
+        vertexAA2.y = posY
+        vertexAA2.z = posZ2
+
+        this.geometryAA.vertices.push( vertexAA1 );
+        this.geometryAA.vertices.push( vertexAA2 );
+
+      } else if(value == 'GG'){
+
+        vertexGG1.x = posX1
+        vertexGG1.y = posY
+        vertexGG1.z = posZ1
+
+        vertexGG2.x = posX2
+        vertexGG2.y = posY
+        vertexGG2.z = posZ2
+
+        this.geometryGG.vertices.push( vertexGG1 );
+        this.geometryGG.vertices.push( vertexGG2 );
+
+      } else if(value == 'TT'){
+
+        vertexTT1.x = posX1
+        vertexTT1.y = posY
+        vertexTT1.z = posZ1
+
+        vertexTT2.x = posX2
+        vertexTT2.y = posY
+        vertexTT2.z = posZ2
+
+        this.geometryTT.vertices.push( vertexTT1 );
+        this.geometryTT.vertices.push( vertexTT2 );
+
+      } else if(value == 'CC'){
+
+        vertexCC1.x = posX1
+        vertexCC1.y = posY
+        vertexCC1.z = posZ1
+
+        vertexCC2.x = posX2
+        vertexCC2.y = posY
+        vertexCC2.z = posZ2
+
+        this.geometryCC.vertices.push( vertexCC1 );
+        this.geometryCC.vertices.push( vertexCC2 );
+
+      } else if(value == 'AG' || value == 'AT' || value == 'AC' || value == 'A' ){
+
+        vertexA1.x = posX1
+        vertexA1.y = posY
+        vertexA1.z = posZ1
+
+        vertexA2.x = posX2
+        vertexA2.y = posY
+        vertexA2.z = posZ2
+
+        this.geometryA.vertices.push( vertexA1 );
+        this.geometryA.vertices.push( vertexA2 );
+
+      } else if(value == 'GA' || value == 'GT' || value == 'GC' || value == 'G' ){
+
+        vertexG1.x = posX1
+        vertexG1.y = posY
+        vertexG1.z = posZ1
+
+        vertexG2.x = posX2
+        vertexG2.y = posY
+        vertexG2.z = posZ2
+
+        this.geometryG.vertices.push( vertexG1 );
+        this.geometryG.vertices.push( vertexG2 );
+
+      } else if(value == 'TA' || value == 'TG' || value == 'TC' || value == 'T' ){
+
+        vertexT1.x = posX1
+        vertexT1.y = posY
+        vertexT1.z = posZ1
+
+        vertexT2.x = posX2
+        vertexT2.y = posY
+        vertexT2.z = posZ2
+
+        this.geometryT.vertices.push( vertexT1 );
+        this.geometryT.vertices.push( vertexT2 );
+
+      } else if(value == 'CA' || value == 'CG' || value == 'CT' || value == 'C' ){
+
+        vertexC1.x = posX1
+        vertexC1.y = posY
+        vertexC1.z = posZ1
+
+        vertexC2.x = posX2
+        vertexC2.y = posY
+        vertexC2.z = posZ2
+
+        this.geometryC.vertices.push( vertexC1 );
+        this.geometryC.vertices.push( vertexC2 );
+
+      } else {
+
+        vertexOther1.x = posX1
+        vertexOther1.y = posY
+        vertexOther1.z = posZ1
+
+        vertexOther2.x = posX2
+        vertexOther2.y = posY
+        vertexOther2.z = posZ2
+
+        this.geometryOther.vertices.push( vertexOther1 );
+        this.geometryOther.vertices.push( vertexOther2 );
+
+      }
+
 
   
+    } // end for loop
+
+
+    // AA
+    this.materialAA = new THREE.LineBasicMaterial( {color: 0x425dbf});
+    this.lineAA = new THREE.LineSegments( this.geometryAA, this.materialAA )
+    el.setObject3D('AALines', this.lineAA)  
+
+    // GG
+    this.materialGG = new THREE.LineBasicMaterial( {color: 0x3595d6});
+    this.lineGG = new THREE.LineSegments( this.geometryGG, this.materialGG )
+    el.setObject3D('GGLines', this.lineGG)  
+
+    // TT
+    this.materialTT = new THREE.LineBasicMaterial( {color: 0x0e9c9c});
+    this.lineTT = new THREE.LineSegments( this.geometryTT, this.materialTT )
+    el.setObject3D('TTLines', this.lineTT)  
+
+    // CC
+    this.materialCC = new THREE.LineBasicMaterial( {color: 0x3ba510});
+    this.lineCC = new THREE.LineSegments( this.geometryCC, this.materialCC )
+    el.setObject3D('CCLines', this.lineCC)
+
+    // A
+    this.materialA = new THREE.LineBasicMaterial( {color: 0x92c746});
+    this.lineA = new THREE.LineSegments( this.geometryA, this.materialA )
+    el.setObject3D('ALines', this.lineA)
+
+    // G
+    this.materialG = new THREE.LineBasicMaterial( {color: 0xf2c100});
+    this.lineG = new THREE.LineSegments( this.geometryG, this.materialG )
+    el.setObject3D('GLines', this.lineG)
+  
+    // T
+    this.materialT = new THREE.LineBasicMaterial( {color: 0xff6d19});
+    this.lineT = new THREE.LineSegments( this.geometryT, this.materialT )
+    el.setObject3D('TLines', this.lineT)  
+
+     // C
+    this.materialC = new THREE.LineBasicMaterial( {color: 0x9f0f7b});
+    this.lineC = new THREE.LineSegments( this.geometryC, this.materialC )
+    el.setObject3D('CLines', this.lineC)
+
+    // Other
+    this.materialOther = new THREE.LineBasicMaterial( {color: 0x4a1672});
+    this.lineOther = new THREE.LineSegments( this.geometryOther, this.materialOther )
+    el.setObject3D('lineOther', this.lineOther)
+
+
+
+  },
+  tick: function () {
 
   },
   remove: function () {
-    this.el.removeObject3D('mesh');
+    var el = this.el;
+    el.parentNode.removeChild(el);
   },
-  tick: function (time, timeDelta) {
-    
+  pause: function () {
 
-   
+  },
+  play: function () {
 
   }
 });
