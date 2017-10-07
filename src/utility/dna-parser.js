@@ -17,6 +17,9 @@ var papaFile = function(input, callback) {
     // if file selected
     if (input.files.length > 0) {
 
+    	var status = document.querySelector('.chrom-stats')
+		status.innerHTML = "Loading Data..."
+
         // Should work with default 23andme downloaded .txt file!
         Papa.parse(input.files[0], {
             delimiter: "	", // tab

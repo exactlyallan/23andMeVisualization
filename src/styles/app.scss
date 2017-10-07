@@ -1,29 +1,100 @@
+html,
+body {
+    font-family: sans-serif;
+    font-size: 16px;
+}
 
-.nav {
-	background-color: rgba(0,0,0,0.35);
-    min-width: 50px;
-    min-height: 50px;
-    padding: 1vw;
-    width: 2.5vw;
-    height: 2.5vw;
+.load-button-wrap {
+    background-color: rgba(0, 0, 0, 0.35);
+    width: 50px;
+    height: 50px;
+    padding: 1vh;
     position: absolute;
-    bottom: 20px;
-    left: 20px;
+    top: 20px;
+    right: 20px;
     z-index: 9999;
 }
 
-.nav input {
-	width: 0;
-	height: 0;
-	opacity: 0;
+.load-button-wrap input {
+    width: 0;
+    height: 0;
+    opacity: 0;
 }
 
-.nav label {
-	cursor: pointer;
-	color: white;
+.load-button-wrap label {
+    cursor: pointer;
+    color: white;
 }
 
-.nav label .upload-img {
-	width: 100%;
-	height: auto;
+.load-button-wrap label .upload-img {
+    width: 100%;
+    height: auto;
 }
+
+.chrom-button-wrap {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.35);
+    vertical-align: top;
+    width: 50px;
+    height: auto;
+    margin-top: 1vh;
+    padding: 1vh;
+    top: 90px;
+    right: 20px;
+    z-index: 9999;
+    opacity: 1;
+    text-align: center;
+    transition: opacity 1s;
+    transition-timing-function: ease-in;
+}
+
+.zero-opacity {
+    opacity: 0 !important;
+    transition: opacity 1s;
+    transition-timing-function: ease-in;
+}
+
+.selected {
+    color: white !important;
+    border: 1px solid white;
+    font-weight: bold;
+}
+
+.chrom-button {
+    position: relative;
+    width: 100%;
+    padding: 0.6vh 0vh;
+    display: inline-block;
+    color: #aaa;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.3vh;
+}
+
+.chrom-button:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.chrom-stats, {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.35);
+    bottom: 20px;
+    width: auto;
+    height: auto;
+    padding: 1rem;
+    padding-left: 3vw;
+    color: #aaa;
+    text-align: right;
+    font-size: 1.3vh;
+    text-decoration: none;
+    z-index: 9999;
+}
+
+.chrom-stats a {
+	text-decoration: none;
+	color: #aaa;
+}
+
+
+

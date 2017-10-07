@@ -2,7 +2,7 @@
 
 ## Description
 
-Visualizing raw 23andMe data in 3D.
+Visualizing raw 23andMe data in 3D via A-frame. [More details here](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data)
 
 <hr>
 
