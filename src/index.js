@@ -41,6 +41,16 @@ function buildChromBTN(){
 
 	var chromBtn = document.querySelector('.chrom-button-wrap');
 
+	// clear
+	chromBtn.innerHTML = '';
+	var sceneEl = document.querySelector('a-scene');
+	var entityElold = document.querySelector('.chrom-viz');
+    if(entityElold != null){
+    	sceneEl.removeChild(entityElold)
+    }
+
+
+
 	// add button for each chrom
 	for(var i=1; i<26; i++){
 
@@ -62,6 +72,9 @@ function buildChromBTN(){
 	
 		chromBtn.appendChild(newEl)
 
+		// hide intro
+		var intro = document.querySelector('.intro')
+		addClass(intro, 'no-display')
 
 		var status = document.querySelector('.chrom-stats')
 		status.innerHTML = "Select chromosome..."

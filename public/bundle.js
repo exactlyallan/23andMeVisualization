@@ -57,7 +57,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 0);
@@ -117,6 +117,16 @@ function buildChromBTN(){
 
 	var chromBtn = document.querySelector('.chrom-button-wrap');
 
+	// clear
+	chromBtn.innerHTML = '';
+	var sceneEl = document.querySelector('a-scene');
+	var entityElold = document.querySelector('.chrom-viz');
+    if(entityElold != null){
+    	sceneEl.removeChild(entityElold)
+    }
+
+
+
 	// add button for each chrom
 	for(var i=1; i<26; i++){
 
@@ -138,6 +148,9 @@ function buildChromBTN(){
 	
 		chromBtn.appendChild(newEl)
 
+		// hide intro
+		var intro = document.querySelector('.intro')
+		addClass(intro, 'no-display')
 
 		var status = document.querySelector('.chrom-stats')
 		status.innerHTML = "Select chromosome..."
@@ -237,7 +250,7 @@ function removeClass(el, className) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<!DOCTYPE html>\n<html>\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n    <meta name=\"author\" content=\"exactly.allan@gmail.com\">\n    <meta name=\"description\" content=\"Genetic Visualization\">\n    <script src=\"https://aframe.io/releases/0.6.1/aframe.min.js\"></script>\n</head>\n\n<body>\n    <!-- load button -->\n    <div class=\"load-button-wrap\" title=\"click to upload 23andMe raw dna data\">\n        <label for=\"upload-dna-data\"><img class=\"upload-img\" src=\"" + __webpack_require__(3) + "\" /></label>\n        <input type=\"file\" id=\"upload-dna-data\" accept=\".tsv, .txt\">\n    </div>\n    <!-- chrom buttons -->\n    <div class=\"chrom-button-wrap zero-opacity\" title=\"select chromosome to view\"></div>\n    <!-- chrom legend -->\n    <div class=\"chrom-key-wrap zero-opacity\" title=\"legend\">\n      <div>\n        <span class=\"chrom-key AA\">AA</span>\n        <span class=\"chrom-key GG\">GG</span>\n        <span class=\"chrom-key TT\">TT</span>\n        <span class=\"chrom-key CC\">CC</span>\n      </div>\n      <div class=\"chrom-key A\">AG AT AC A</div>\n      <div class=\"chrom-key G\">GA GT GC G</div>\n      <div class=\"chrom-key T\">TA TG TC T </div>\n      <div class=\"chrom-key C\">CA CG CT C</div>\n      <div class=\"chrom-key O\">Other</div>\n    </div>\n    <!-- chrom stats -->\n    <div class=\"chrom-stats\" title=\"status\"><a href=\"https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data\" target=\"_blank\">Waiting for 23andMe DNA file...</a></div>\n    <!-- A-frame -->\n    <a-scene antialias=\"false\">\n        <a-entity camera position=\"0 20 40\" look-controls wasd-controls></a-entity>\n        <a-sky color=\"#3c3b3b\"></a-sky>\n        <!-- Loading Section -->\n        <a-entity id=\"loading3D\" position=\"0 20 -50\" \n                  animation__rot=\"property: rotation; dur: 9000; to: 0 180 0; loop: true; easing: easeInOutExpo; dir: alternate\">\n            <a-torus-knot scale=\"1 1 1\"  color=\"#ffffff\" arc=\"180\" p=\"5\" q=\"8\" radius=\"5\" radius-tubular=\"0.1\" \n                          animation=\"property: rotation; dur: 7000; to: 0 0 360; loop: true; easing: linear;\"></a-torus-knot>\n        </a-entity>\n    </a-scene>\n</body>\n\n</html>";
+module.exports = "<!DOCTYPE html>\n<html>\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n    <meta name=\"author\" content=\"exactly.allan@gmail.com\">\n    <meta name=\"description\" content=\"Genetic Visualization\">\n    <script src=\"https://aframe.io/releases/0.6.1/aframe.min.js\"></script>\n</head>\n\n<body>\n    <!-- intro -->\n    <div class=\"intro\"><strong>Welcome!</strong> Experience the scale of your own <a href=\"https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data\" target=\"_blank\">23andMe DNA</a> in this <a href=\"https://aframe.io/\" target=\"_blank\">3D webVR visualization</a>. No data is sent or stored. Each <a href=\"https://www.23andme.com/gen101/snps/\" target=\"_blank\">SNP</a> is placed on a spiral based on its chromosome position, colored based on its value, and shown on a column that represents the full scale of your unrecorded chromosome data. For the A-frame inspector view press: ctrl+alt+i. <strong>Start</strong> by clicking the arrow button on the upper right.</div>\n    <!-- load button -->\n    <div class=\"load-button-wrap\" title=\"click to upload 23andMe raw dna data\">\n        <label for=\"upload-dna-data\"><img class=\"upload-img\" src=\"" + __webpack_require__(3) + "\" /></label>\n        <input type=\"file\" id=\"upload-dna-data\" accept=\".tsv, .txt\">\n    </div>\n    <!-- chrom buttons -->\n    <div class=\"chrom-button-wrap zero-opacity\" title=\"select chromosome to view\"></div>\n    <!-- chrom legend -->\n    <div class=\"chrom-key-wrap zero-opacity\" title=\"legend\">\n      <div>\n        <span class=\"chrom-key AA\">AA</span>\n        <span class=\"chrom-key GG\">GG</span>\n        <span class=\"chrom-key TT\">TT</span>\n        <span class=\"chrom-key CC\">CC</span>\n      </div>\n      <div class=\"chrom-key A\">AG AT AC A</div>\n      <div class=\"chrom-key G\">GA GT GC G</div>\n      <div class=\"chrom-key T\">TA TG TC T </div>\n      <div class=\"chrom-key C\">CA CG CT C</div>\n      <div class=\"chrom-key O\">Other</div>\n    </div>\n    <!-- chrom stats -->\n    <div class=\"chrom-stats\" title=\"status\"><a href=\"https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data\" target=\"_blank\">Waiting for 23andMe DNA txt file...</a></div>\n    <!-- A-frame -->\n    <a-scene antialias=\"false\">\n        <a-entity camera position=\"0 20 40\" look-controls wasd-controls></a-entity>\n        <a-sky color=\"#3c3b3b\"></a-sky>\n        <!-- Loading Section -->\n        <a-entity id=\"loading3D\" position=\"0 20 -50\" \n                  animation__rot=\"property: rotation; dur: 9000; to: 0 180 0; loop: true; easing: easeInOutExpo; dir: alternate\">\n            <a-torus-knot scale=\"1 1 1\"  color=\"#ffffff\" arc=\"180\" p=\"5\" q=\"8\" radius=\"5\" radius-tubular=\"0.1\" \n                          animation=\"property: rotation; dur: 7000; to: 0 0 360; loop: true; easing: linear;\"></a-torus-knot>\n        </a-entity>\n    </a-scene>\n</body>\n\n</html>";
 
 /***/ }),
 /* 3 */

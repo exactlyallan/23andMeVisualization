@@ -7,12 +7,14 @@
     <meta name="author" content="exactly.allan@gmail.com">
     <meta name="description" content="Genetic Visualization">
     <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
-<link href="/./styles/app.css" rel="stylesheet"><script type="text/javascript" src="/bundle.js"></script></head>
+<link href="./styles/app.css" rel="stylesheet"><script type="text/javascript" src="bundle.js"></script></head>
 
 <body>
+    <!-- intro -->
+    <div class="intro"><strong>Welcome!</strong> Experience the scale of your own <a href="https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data" target="_blank">23andMe DNA</a> in this <a href="https://aframe.io/" target="_blank">3D webVR visualization</a>. No data is sent or stored. Each <a href="https://www.23andme.com/gen101/snps/" target="_blank">SNP</a> is placed on a spiral based on its chromosome position, colored based on its value, and shown on a column that represents the full scale of your unrecorded chromosome data. For the A-frame inspector view press: ctrl+alt+i. <strong>Start</strong> by clicking the arrow button on the upper right.</div>
     <!-- load button -->
     <div class="load-button-wrap" title="click to upload 23andMe raw dna data">
-        <label for="upload-dna-data"><img class="upload-img" src="/images/upload-dna.png" /></label>
+        <label for="upload-dna-data"><img class="upload-img" src="images/upload-dna.png" /></label>
         <input type="file" id="upload-dna-data" accept=".tsv, .txt">
     </div>
     <!-- chrom buttons -->
@@ -32,7 +34,7 @@
       <div class="chrom-key O">Other</div>
     </div>
     <!-- chrom stats -->
-    <div class="chrom-stats" title="status"><a href="https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data" target="_blank">Waiting for 23andMe DNA file...</a></div>
+    <div class="chrom-stats" title="status"><a href="https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data" target="_blank">Waiting for 23andMe DNA txt file...</a></div>
     <!-- A-frame -->
     <a-scene antialias="false">
         <a-entity camera position="0 20 40" look-controls wasd-controls></a-entity>
