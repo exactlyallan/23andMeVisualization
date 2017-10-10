@@ -64,7 +64,7 @@ function buildChromBTN(){
 
 
 		var status = document.querySelector('.chrom-stats')
-		status.innerHTML = "Select Chromosome..."
+		status.innerHTML = "Select chromosome..."
 
 		// show buttons
 		if (hasClass(chromBtn, 'zero-opacity')) removeClass(chromBtn, 'zero-opacity');
@@ -85,6 +85,10 @@ function buildChromBTN(){
 			// add high light
 			addClass(event.target,'selected')
 
+			// show key
+			var key = document.querySelector('.chrom-key-wrap')
+			removeClass(key, 'zero-opacity')
+
 			// build 3D
 			buildChroms(dnaData, index)
 		})
@@ -97,7 +101,7 @@ function buildChromBTN(){
 // add genetic-viz-component entities to scene once data is loaded
 function buildChroms(dnaData, chromNum) {
 
-	console.log("Selected:", chromNum)
+	console.log("Selected: ", chromNum)
 
     var sceneEl = document.querySelector('a-scene');
 
@@ -110,18 +114,23 @@ function buildChroms(dnaData, chromNum) {
     // remove previous chrom
     var entityElold = document.querySelector('.chrom-viz');
     if(entityElold != null){
-    	console.log("Removed", entityElold.getAttribute('data-index'))
     	sceneEl.removeChild(entityElold)
     }
+
+    // calc height to animate to
+    var height = -(dnaData[chromNum].length/20) * 0.4 // NOTE: match values with genetic-viz-component col, but use SNP length not Chrom length
+    var heightPos = '0 ' + height + ' 0'
+
+    // calc how long it should take, min of 10 sec
+    var timePos = Math.max(10000, -height * 70);
 
     // add selected chrom
    	var entityEl = document.createElement('a-entity');
    	addClass(entityEl, 'chrom-viz')
 	entityEl.setAttribute('genetic-viz-component', {chromData: dnaData[chromNum]});
-	entityEl.setAttribute('position', {x:0, y:0, z:0})
-	entityEl.setAttribute('animation', {property:'rotation', delay:'0', dur:'75000', to:'0 360 0', easing:'linear', loop:true})
-	entityEl.setAttribute('animation__2', {property:'position', delay:'100', dur:'60000', to:'0 -200 0', easing:'easeInOutSine', loop:true, dir:'alternate'})
-
+	entityEl.setAttribute('position', {x:0, y:-10, z:0})
+	entityEl.setAttribute('animation', {property:'rotation', delay:'0', dur:'78000', to:'0 360 0', easing:'linear', loop:true})
+	entityEl.setAttribute('animation__2', {property:'position', delay:'500', dur:timePos, to:heightPos, easing:'easeInOutSine', loop:true, dir:'alternate'})
 
 	sceneEl.appendChild(entityEl);
 

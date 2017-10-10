@@ -82,11 +82,11 @@ body {
     bottom: 20px;
     width: auto;
     height: auto;
-    padding: 1rem;
-    padding-left: 3vw;
+    padding: 1vh;
+    padding-left: 2vw;
     color: #aaa;
     text-align: right;
-    font-size: 1.3vh;
+    font-size: 0.8rem;
     text-decoration: none;
     z-index: 9999;
 }
@@ -96,5 +96,54 @@ body {
 	color: #aaa;
 }
 
+.chrom-key-wrap{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.35);
+    top: 20px;
+	width: 7vw;
+    height: auto;
+    padding: 1vh;
+    padding-left: 2vw;
+    color: #aaa;
+    text-align: right;
+    font-size: 0.8rem;
+    text-decoration: none;
+    z-index: 9999;
+    transition: opacity 1s;
+    transition-timing-function: ease-in;
+}
+
+.chrom-key {
+	position: relative;
+    width: 100%;
+}
+
+.AA {
+	color:#425dbf;
+}
+.GG {
+	color: #3595d6;
+}
+.TT {
+	color: #0e9c9c;
+}
+.CC {
+	color: #3ba510;
+}
+.A {
+	color: #92c746;
+}
+.G {
+	color: #f2c100;	
+}
+.T {
+	color: #ff6d19;
+}	
+.C {
+	color: #9f0f7b;
+}
+.O {
+	color: #d81515;
+}
 
 

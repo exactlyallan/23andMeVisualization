@@ -4,6 +4,7 @@
 
 Visualizing raw 23andMe data in 3D via A-frame. [More details here](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data)
 
+
 <hr>
 
 ## Installation
@@ -15,9 +16,10 @@ To install the Node dependencies:
 
 ## Development
 
-To serve the site from a simple Node development server:
+To serve the site from webpack-dev-server with live updates:
 
-> npm run dev via webpack-dev-server
+> npm run dev 
+
 
 ## Build
 
@@ -25,11 +27,18 @@ To build source files:
 	
 > npm run build
 
+
 ## Run
 
 To run on a simple express server after build:
 	
  > npm run start
+
+
+## Demo
+
+[Live Demo](www.allanenemark.com/dnaVis)
+
 
 
 ## License

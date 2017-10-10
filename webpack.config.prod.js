@@ -35,6 +35,7 @@ module.exports = {
             filename: "./styles/app.css",
         }),
         new HtmlWebpackPlugin({
+            inject: 'head', // A-frame requires components injected before DOM
             filename: "index.html",
             template: "src/raw-index.html" // https://github.com/jantimon/html-webpack-plugin
         })

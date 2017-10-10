@@ -1,276 +1,306 @@
 // Genetic-Viz Component
 
 AFRAME.registerComponent('genetic-viz-component', {
-            schema: {
-                chromData: { type: 'array' }
-            },
-            init: function() {
-                // just update
+    schema: {
+        chromData: { type: 'array' }
+    },
+    init: function() {
+        // just update
+    },
+    update: function(oldData) {
+        var data = this.data.chromData;
+        var el = this.el;
+        var dataLength = data.length // full chrom length
 
-            },
-            update: function(oldData) {
-                var data = this.data.chromData;
-                var el = this.el;
-                var dataLength = data.length // full chrom length
+        console.log("chrom data length:", data.length)
+        // {gap: 18674, id: "rs10195681", pos: "18674", chrom: "2", value: "CC"}
+        // AA GG TT CC (4)
+        // AG AT AC A (1)
+        // GA GT GC G (1)
+        // TA TG TC T (1)
+        // CA CG CT C (1)
+        // Other (1)
+        // Gap (1) TBD
 
-                console.log("chrom data length:", data.length)
-                // {gap: 18674, id: "rs10195681", pos: "18674", chrom: "2", value: "CC"}
-                // AA GG TT CC (4)
-                // AG AT AC A (1)
-                // GA GT GC G (1)
-                // TA TG TC T (1)
-                // CA CG CT C (1)
-                // Other (1)
-                // Gap (1) TBD
+        // Visual Attributes 
+        var radius = 25 // ring radius
+        var spaceMulti = 0.02; // line spacing
+        var helixMulti = 0.4; // helix height
+        var lineUpMulti = 0; // line uptick
 
-                var radius = 20 // ring radius
-                var gapCount = 0
+        var gapCount = 0
 
-                this.geometryAA = new THREE.Geometry()
-                this.geometryGG = new THREE.Geometry()
-                this.geometryTT = new THREE.Geometry()
-                this.geometryCC = new THREE.Geometry()
-                this.geometryA = new THREE.Geometry()
-                this.geometryG = new THREE.Geometry()
-                this.geometryT = new THREE.Geometry()
-                this.geometryC = new THREE.Geometry()
-                this.geometryOther = new THREE.Geometry()
+        this.geometryAA = new THREE.Geometry()
+        this.geometryGG = new THREE.Geometry()
+        this.geometryTT = new THREE.Geometry()
+        this.geometryCC = new THREE.Geometry()
+        this.geometryA = new THREE.Geometry()
+        this.geometryG = new THREE.Geometry()
+        this.geometryT = new THREE.Geometry()
+        this.geometryC = new THREE.Geometry()
+        this.geometryOther = new THREE.Geometry()
 
-                for (var j = 0; j < dataLength; j++) {
 
-                    var value = data[j].value
-                    var gap = data[j].gap
+        function calcPos(lineLength, index, gapJ) {
 
-                    gapCount = gapCount + gap + 1; // total gap count
+            var posObj = {}
+            var theta = ((2 * Math.PI) / radius) * spaceMulti //  even spaces increments
 
-                    var lineLength = 2.5;
+            posObj.posX1 = radius * Math.cos(theta * index)
+            posObj.posZ1 = radius * Math.sin(theta * index)
+            posObj.posX2 = (radius + lineLength) * Math.cos(theta * index)
+            posObj.posZ2 = (radius + lineLength) * Math.sin(theta * index)
 
-                    var theta = ((2 * Math.PI) / radius) * 0.05 //  spaces increments
-                    var posX1 = radius * Math.cos(theta * (j + gap))
-                    var posZ1 = radius * Math.sin(theta * (j + gap))
-                    var posX2 = (radius + lineLength) * Math.cos(theta * (j + gap))
-                    var posZ2 = (radius + lineLength) * Math.sin(theta * (j + gap))
-                    var posY = radius / (dataLength * 0.1) * (j + gap) // spiral height
+            posObj.posY1 = ((index + gapJ)/radius) * helixMulti // add blank space for gaps
+            posObj.posY2 = posObj.posY1 + lineUpMulti // slight uptick
 
-                    var vertexAA1 = new THREE.Vector3()
-                    var vertexAA2 = new THREE.Vector3()
+            return (posObj)
+        }
 
-                    var vertexGG1 = new THREE.Vector3()
-                    var vertexGG2 = new THREE.Vector3()
 
-                    var vertexTT1 = new THREE.Vector3()
-                    var vertexTT2 = new THREE.Vector3()
+        for (var j = 0; j < dataLength; j++) {
 
-                    var vertexCC1 = new THREE.Vector3()
-                    var vertexCC2 = new THREE.Vector3()
+            var value = data[j].value
+            var gap = data[j].gap
 
-                    var vertexA1 = new THREE.Vector3()
-                    var vertexA2 = new THREE.Vector3()
+            gapCount = gapCount + gap + 1; // total gap count
 
-                    var vertexG1 = new THREE.Vector3()
-                    var vertexG2 = new THREE.Vector3()
 
-                    var vertexT1 = new THREE.Vector3()
-                    var vertexT2 = new THREE.Vector3()
+            // add value lines
+            if (value == 'AA') {
 
-                    var vertexC1 = new THREE.Vector3()
-                    var vertexC2 = new THREE.Vector3()
+                var posObj = calcPos(3, j, gap)
 
-                    var vertexOther1 = new THREE.Vector3()
-                    var vertexOther2 = new THREE.Vector3()
+                var vertexAA1 = new THREE.Vector3()
+                var vertexAA2 = new THREE.Vector3()
 
+                vertexAA1.x = posObj.posX1
+                vertexAA1.y = posObj.posY1
+                vertexAA1.z = posObj.posZ1
 
+                vertexAA2.x = posObj.posX2
+                vertexAA2.y = posObj.posY2
+                vertexAA2.z = posObj.posZ2
 
-                    // add value lines
-                    if (value == 'AA') {
+                this.geometryAA.vertices.push(vertexAA1);
+                this.geometryAA.vertices.push(vertexAA2);
 
-                        vertexAA1.x = posX1
-                        vertexAA1.y = posY
-                        vertexAA1.z = posZ1
+            } else if (value == 'GG') {
 
-                        vertexAA2.x = posX2
-                        vertexAA2.y = posY
-                        vertexAA2.z = posZ2
+                var posObj = calcPos(3, j, gap)
 
-                        this.geometryAA.vertices.push(vertexAA1);
-                        this.geometryAA.vertices.push(vertexAA2);
 
-                    } else if (value == 'GG') {
+                var vertexGG1 = new THREE.Vector3()
+                var vertexGG2 = new THREE.Vector3()
 
-                        vertexGG1.x = posX1
-                        vertexGG1.y = posY
-                        vertexGG1.z = posZ1
+                vertexGG1.x = posObj.posX1
+                vertexGG1.y = posObj.posY1
+                vertexGG1.z = posObj.posZ1
 
-                        vertexGG2.x = posX2
-                        vertexGG2.y = posY
-                        vertexGG2.z = posZ2
+                vertexGG2.x = posObj.posX2
+                vertexGG2.y = posObj.posY2
+                vertexGG2.z = posObj.posZ2
 
-                        this.geometryGG.vertices.push(vertexGG1);
-                        this.geometryGG.vertices.push(vertexGG2);
+                this.geometryGG.vertices.push(vertexGG1);
+                this.geometryGG.vertices.push(vertexGG2);
 
-                    } else if (value == 'TT') {
+            } else if (value == 'TT') {
 
-                        vertexTT1.x = posX1
-                        vertexTT1.y = posY
-                        vertexTT1.z = posZ1
+                var posObj = calcPos(2, j, gap)
 
-                        vertexTT2.x = posX2
-                        vertexTT2.y = posY
-                        vertexTT2.z = posZ2
+                var vertexTT1 = new THREE.Vector3()
+                var vertexTT2 = new THREE.Vector3()
 
-                        this.geometryTT.vertices.push(vertexTT1);
-                        this.geometryTT.vertices.push(vertexTT2);
+                vertexTT1.x = posObj.posX1
+                vertexTT1.y = posObj.posY1
+                vertexTT1.z = posObj.posZ1
 
-                    } else if (value == 'CC') {
+                vertexTT2.x = posObj.posX2
+                vertexTT2.y = posObj.posY2
+                vertexTT2.z = posObj.posZ2
 
-                        vertexCC1.x = posX1
-                        vertexCC1.y = posY
-                        vertexCC1.z = posZ1
+                this.geometryTT.vertices.push(vertexTT1);
+                this.geometryTT.vertices.push(vertexTT2);
 
-                        vertexCC2.x = posX2
-                        vertexCC2.y = posY
-                        vertexCC2.z = posZ2
+            } else if (value == 'CC') {
 
-                        this.geometryCC.vertices.push(vertexCC1);
-                        this.geometryCC.vertices.push(vertexCC2);
+                var posObj = calcPos(2, j, gap)
 
-                    } else if (value == 'AG' || value == 'AT' || value == 'AC' || value == 'A') {
+                var vertexCC1 = new THREE.Vector3()
+                var vertexCC2 = new THREE.Vector3()
 
-                        vertexA1.x = posX1
-                        vertexA1.y = posY
-                        vertexA1.z = posZ1
+                vertexCC1.x = posObj.posX1
+                vertexCC1.y = posObj.posY1
+                vertexCC1.z = posObj.posZ1
 
-                        vertexA2.x = posX2
-                        vertexA2.y = posY
-                        vertexA2.z = posZ2
+                vertexCC2.x = posObj.posX2
+                vertexCC2.y = posObj.posY2
+                vertexCC2.z = posObj.posZ2
 
-                        this.geometryA.vertices.push(vertexA1);
-                        this.geometryA.vertices.push(vertexA2);
+                this.geometryCC.vertices.push(vertexCC1);
+                this.geometryCC.vertices.push(vertexCC2);
 
-                    } else if (value == 'GA' || value == 'GT' || value == 'GC' || value == 'G') {
+            } else if (value == 'AG' || value == 'AT' || value == 'AC' || value == 'A') {
 
-                        vertexG1.x = posX1
-                        vertexG1.y = posY
-                        vertexG1.z = posZ1
+                var posObj = calcPos(1.5, j, gap)
 
-                        vertexG2.x = posX2
-                        vertexG2.y = posY
-                        vertexG2.z = posZ2
+                var vertexA1 = new THREE.Vector3()
+                var vertexA2 = new THREE.Vector3()
 
-                        this.geometryG.vertices.push(vertexG1);
-                        this.geometryG.vertices.push(vertexG2);
+                vertexA1.x = posObj.posX1
+                vertexA1.y = posObj.posY1
+                vertexA1.z = posObj.posZ1
 
-                    } else if (value == 'TA' || value == 'TG' || value == 'TC' || value == 'T') {
+                vertexA2.x = posObj.posX2
+                vertexA2.y = posObj.posY2
+                vertexA2.z = posObj.posZ2
 
-                        vertexT1.x = posX1
-                        vertexT1.y = posY
-                        vertexT1.z = posZ1
+                this.geometryA.vertices.push(vertexA1);
+                this.geometryA.vertices.push(vertexA2);
 
-                        vertexT2.x = posX2
-                        vertexT2.y = posY
-                        vertexT2.z = posZ2
+            } else if (value == 'GA' || value == 'GT' || value == 'GC' || value == 'G') {
 
-                        this.geometryT.vertices.push(vertexT1);
-                        this.geometryT.vertices.push(vertexT2);
+                var posObj = calcPos(1.5, j, gap)
 
-                    } else if (value == 'CA' || value == 'CG' || value == 'CT' || value == 'C') {
+                var vertexG1 = new THREE.Vector3()
+                var vertexG2 = new THREE.Vector3()
 
-                        vertexC1.x = posX1
-                        vertexC1.y = posY
-                        vertexC1.z = posZ1
+                vertexG1.x = posObj.posX1
+                vertexG1.y = posObj.posY1
+                vertexG1.z = posObj.posZ1
 
-                        vertexC2.x = posX2
-                        vertexC2.y = posY
-                        vertexC2.z = posZ2
+                vertexG2.x = posObj.posX2
+                vertexG2.y = posObj.posY2
+                vertexG2.z = posObj.posZ2
 
-                        this.geometryC.vertices.push(vertexC1);
-                        this.geometryC.vertices.push(vertexC2);
+                this.geometryG.vertices.push(vertexG1);
+                this.geometryG.vertices.push(vertexG2);
 
-                    } else {
+            } else if (value == 'TA' || value == 'TG' || value == 'TC' || value == 'T') {
 
-                        vertexOther1.x = posX1
-                        vertexOther1.y = posY
-                        vertexOther1.z = posZ1
+                var posObj = calcPos(1, j, gap)
 
-                        vertexOther2.x = posX2
-                        vertexOther2.y = posY
-                        vertexOther2.z = posZ2
+                var vertexT1 = new THREE.Vector3()
+                var vertexT2 = new THREE.Vector3()
 
-                        this.geometryOther.vertices.push(vertexOther1);
-                        this.geometryOther.vertices.push(vertexOther2);
+                vertexT1.x = posObj.posX1
+                vertexT1.y = posObj.posY1
+                vertexT1.z = posObj.posZ1
 
-                    }
+                vertexT2.x = posObj.posX2
+                vertexT2.y = posObj.posY2
+                vertexT2.z = posObj.posZ2
 
+                this.geometryT.vertices.push(vertexT1);
+                this.geometryT.vertices.push(vertexT2);
 
+            } else if (value == 'CA' || value == 'CG' || value == 'CT' || value == 'C') {
 
-                } // end for loop
+                var posObj = calcPos(1, j, gap)
 
+                var vertexC1 = new THREE.Vector3()
+                var vertexC2 = new THREE.Vector3()
 
-                // AA
-                this.materialAA = new THREE.LineBasicMaterial({ color: 0x425dbf });
-                this.lineAA = new THREE.LineSegments(this.geometryAA, this.materialAA)
-                el.setObject3D('AALines', this.lineAA)
+                vertexC1.x = posObj.posX1
+                vertexC1.y = posObj.posY1
+                vertexC1.z = posObj.posZ1
 
-                // GG
-                this.materialGG = new THREE.LineBasicMaterial({ color: 0x3595d6 });
-                this.lineGG = new THREE.LineSegments(this.geometryGG, this.materialGG)
-                el.setObject3D('GGLines', this.lineGG)
+                vertexC2.x = posObj.posX2
+                vertexC2.y = posObj.posY2
+                vertexC2.z = posObj.posZ2
 
-                // TT
-                this.materialTT = new THREE.LineBasicMaterial({ color: 0x0e9c9c });
-                this.lineTT = new THREE.LineSegments(this.geometryTT, this.materialTT)
-                el.setObject3D('TTLines', this.lineTT)
+                this.geometryC.vertices.push(vertexC1);
+                this.geometryC.vertices.push(vertexC2);
 
-                // CC
-                this.materialCC = new THREE.LineBasicMaterial({ color: 0x3ba510 });
-                this.lineCC = new THREE.LineSegments(this.geometryCC, this.materialCC)
-                el.setObject3D('CCLines', this.lineCC)
+            } else {
 
-                // A
-                this.materialA = new THREE.LineBasicMaterial({ color: 0x92c746 });
-                this.lineA = new THREE.LineSegments(this.geometryA, this.materialA)
-                el.setObject3D('ALines', this.lineA)
+                var posObj = calcPos(-1, j, gap)
 
-                // G
-                this.materialG = new THREE.LineBasicMaterial({ color: 0xf2c100 });
-                this.lineG = new THREE.LineSegments(this.geometryG, this.materialG)
-                el.setObject3D('GLines', this.lineG)
+                var vertexOther1 = new THREE.Vector3()
+                var vertexOther2 = new THREE.Vector3()
 
-                // T
-                this.materialT = new THREE.LineBasicMaterial({ color: 0xff6d19 });
-                this.lineT = new THREE.LineSegments(this.geometryT, this.materialT)
-                el.setObject3D('TLines', this.lineT)
+                vertexOther1.x = posObj.posX1
+                vertexOther1.y = posObj.posY1
+                vertexOther1.z = posObj.posZ1
 
-                // C
-                this.materialC = new THREE.LineBasicMaterial({ color: 0x9f0f7b });
-                this.lineC = new THREE.LineSegments(this.geometryC, this.materialC)
-                el.setObject3D('CLines', this.lineC)
+                vertexOther2.x = posObj.posX2
+                vertexOther2.y = posObj.posY2
+                vertexOther2.z = posObj.posZ2
 
-                // Other
-                this.materialOther = new THREE.LineBasicMaterial({ color: 0x4a1672 });
-                this.lineOther = new THREE.LineSegments(this.geometryOther, this.materialOther)
-                el.setObject3D('lineOther', this.lineOther)
+                this.geometryOther.vertices.push(vertexOther1);
+                this.geometryOther.vertices.push(vertexOther2);
 
-                // update status
-                var status = document.querySelector('.chrom-stats')
-                status.innerHTML = "Displaying " + data.length + " SNPs out of an estimated " + gapCount;
+            }
 
 
-                // center colum
-                var height = dataLength * 0.1
-                this.geometryCyl = new THREE.CylinderGeometry(radius, radius, height, 16);
-                this.materialCyl = new THREE.MeshBasicMaterial({ color: 0x444 });
-                this.materialCyl.opacity = 0.1
-                this.materialCyl.transparent = true;
-                this.cylinder = new THREE.Mesh(this.geometryCyl, this.materialCyl);
-                this.cylinder.position.set(0,height/2,0)
-                
-                el.setObject3D('cylinder', this.cylinder)
 
+        } // end for loop
 
-                } // end update
 
-            }); // end component
+        // AA
+        this.materialAA = new THREE.LineBasicMaterial({ color: 0x425dbf });
+        this.lineAA = new THREE.LineSegments(this.geometryAA, this.materialAA)
+        el.setObject3D('AALines', this.lineAA)
 
+        // GG
+        this.materialGG = new THREE.LineBasicMaterial({ color: 0x3595d6 });
+        this.lineGG = new THREE.LineSegments(this.geometryGG, this.materialGG)
+        el.setObject3D('GGLines', this.lineGG)
 
+        // TT
+        this.materialTT = new THREE.LineBasicMaterial({ color: 0x0e9c9c });
+        this.lineTT = new THREE.LineSegments(this.geometryTT, this.materialTT)
+        el.setObject3D('TTLines', this.lineTT)
 
+        // CC
+        this.materialCC = new THREE.LineBasicMaterial({ color: 0x3ba510 });
+        this.lineCC = new THREE.LineSegments(this.geometryCC, this.materialCC)
+        el.setObject3D('CCLines', this.lineCC)
+
+        // A
+        this.materialA = new THREE.LineBasicMaterial({ color: 0x92c746 });
+        this.lineA = new THREE.LineSegments(this.geometryA, this.materialA)
+        el.setObject3D('ALines', this.lineA)
+
+        // G
+        this.materialG = new THREE.LineBasicMaterial({ color: 0xf2c100 });
+        this.lineG = new THREE.LineSegments(this.geometryG, this.materialG)
+        el.setObject3D('GLines', this.lineG)
+
+        // T
+        this.materialT = new THREE.LineBasicMaterial({ color: 0xff6d19 });
+        this.lineT = new THREE.LineSegments(this.geometryT, this.materialT)
+        el.setObject3D('TLines', this.lineT)
+
+        // C
+        this.materialC = new THREE.LineBasicMaterial({ color: 0x9f0f7b });
+        this.lineC = new THREE.LineSegments(this.geometryC, this.materialC)
+        el.setObject3D('CLines', this.lineC)
+
+        // Other
+        this.materialOther = new THREE.LineBasicMaterial({ color: 0xd81515});
+        this.lineOther = new THREE.LineSegments(this.geometryOther, this.materialOther)
+        el.setObject3D('lineOther', this.lineOther)
+
+
+        // update status
+        var status = document.querySelector('.chrom-stats')
+        status.innerHTML = "Displaying " + data.length + " SNPs of an estimated total " + gapCount + " base pairs.";
+
+
+        // center colum
+        var vizHeight = (gapCount/radius )* helixMulti; // shows height of FULL chrom
+
+        this.geometryCyl = new THREE.CylinderGeometry(radius, radius, vizHeight, 32);
+        this.materialCyl = new THREE.MeshBasicMaterial({ color: 0x444 });
+        this.materialCyl.opacity = 0.2
+        this.materialCyl.transparent = true;
+        this.cylinder = new THREE.Mesh(this.geometryCyl, this.materialCyl);
+        this.cylinder.position.set(0, vizHeight / 2, 0)
+
+        el.setObject3D('cylinder', this.cylinder)
+
+
+    } // end update
+
+}); // end component
