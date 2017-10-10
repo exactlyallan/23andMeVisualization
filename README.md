@@ -37,7 +37,7 @@ To run on a simple express server after build:
 
 ## Demo
 
-[Live Demo](http://www.allanenemark.com/dnaVis)
+[Live Demo](http://www.allanenemark.com/dnaViz/)
 
 
 
