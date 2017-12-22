@@ -4,7 +4,7 @@
 
 Visualizing raw 23andMe data in 3D via A-frame. [More details here](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data)
 
-![dna viz](./docs/images/sampledna.png)
+![dna viz](./src/images/sampledna.png)
 
 <hr>
 
