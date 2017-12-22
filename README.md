@@ -4,6 +4,7 @@
 
 Visualizing raw 23andMe data in 3D via A-frame. [More details here](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-and-Downloading-Your-Raw-Data)
 
+![dna viz](./docs/images/sampledna.png)
 
 <hr>
 
@@ -11,12 +12,14 @@ Visualizing raw 23andMe data in 3D via A-frame. [More details here](https://cust
 
 To install the Node dependencies:
 
+
  > npm install
 
 
 ## Development
 
 To serve the site from webpack-dev-server with live updates:
+
 
 > npm run dev 
 
@@ -32,12 +35,13 @@ To build source files:
 
 To run on a simple express server after build:
 	
+
  > npm run start
 
 
 ## Demo
 
-[Live Demo](http://www.allanenemark.com/dnaViz/)
+[Live Demo](http://allanenemark.com/dnaViz/)
 
 
 
