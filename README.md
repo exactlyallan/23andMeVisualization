@@ -41,7 +41,7 @@ To run on a simple express server after build:
 
 ## Demo
 
-[Live Demo](http://allanenemark.com/dnaViz/)
+[Live Demo](https://exactlyallan.github.io/23andMeVisualization/)
 
 
 
